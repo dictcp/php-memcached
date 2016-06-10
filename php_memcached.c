@@ -852,7 +852,7 @@ zend_bool s_compress_value (php_memc_compression_type compression_type, zend_str
 	}
 
 	/* This means the value was too small to be compressed, still a success */
-	if (compressed_size > (payload->len * MEMC_G(compression_factor))) {
+	if (payload->len < (compressed_size * MEMC_G(compression_factor))) {
 		MEMC_VAL_DEL_FLAG(*flags, MEMC_VAL_COMPRESSED);
 		efree (buffer);
 		return 1;
