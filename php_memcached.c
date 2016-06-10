@@ -858,6 +858,8 @@ zend_bool s_compress_value (php_memc_compression_type compression_type, zend_str
 		return 1;
 	}
 
+	MEMC_VAL_SET_FLAG(*flags, MEMC_VAL_COMPRESSED);
+
 	payload = zend_string_realloc(payload, compressed_size + sizeof(uint32_t), 0);
 
 	/* Copy the uin32_t at the beginning */
@@ -1022,7 +1024,6 @@ zend_string *s_zval_to_payload(php_memc_object_t *intern, zval *value, uint32_t 
 			zend_string_release(payload);
 			return NULL;
 		}
-		MEMC_VAL_SET_FLAG(*flags, MEMC_VAL_COMPRESSED);
 	}
 
 	if (memc_user_data->set_udf_flags >= 0) {
