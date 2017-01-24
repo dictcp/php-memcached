@@ -1,7 +1,7 @@
 --TEST--
 Test different kind of keys
 --SKIPIF--
-<?php if (!extension_loaded("memcached")) print "skip"; ?>
+<?php include "skipif.inc";?>
 --FILE--
 <?php
 
@@ -11,11 +11,21 @@ $binary = memc_get_instance (array (
 							));
 
 $ascii = memc_get_instance ();
+$ascii->setOption(Memcached::OPT_VERIFY_KEY, 1);
 
 var_dump ($binary->set ('binary key with spaces', 'this is a test'));
+var_dump ($binary->getResultCode () == Memcached::RES_SUCCESS);
+
+var_dump ($binary->set ('binarykeywithnewline' . PHP_EOL, 'this is a test'));
 var_dump ($binary->getResultCode () == Memcached::RES_BAD_KEY_PROVIDED);
 
 var_dump ($ascii->set ('ascii key with spaces', 'this is a test'));
+var_dump ($ascii->getResultCode () == Memcached::RES_BAD_KEY_PROVIDED);
+
+var_dump ($binary->set ('asciikeywithnewline' . PHP_EOL, 'this is a test'));
+var_dump ($binary->getResultCode () == Memcached::RES_BAD_KEY_PROVIDED);
+
+var_dump ($ascii->set (''/*empty key*/, 'this is a test'));
 var_dump ($ascii->getResultCode () == Memcached::RES_BAD_KEY_PROVIDED);
 
 var_dump ($ascii->set (str_repeat ('1234567890', 512), 'this is a test'));
@@ -24,6 +34,12 @@ var_dump ($ascii->getResultCode () == Memcached::RES_BAD_KEY_PROVIDED);
 echo "OK" . PHP_EOL;
 
 --EXPECT--
+bool(true)
+bool(true)
+bool(false)
+bool(true)
+bool(false)
+bool(true)
 bool(false)
 bool(true)
 bool(false)
