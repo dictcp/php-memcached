@@ -45,6 +45,8 @@ function fetch_with_compression($m, $key, $value, $set_compression = '', $factor
 	
 	$value_back = $m->get($key);
 	var_dump($value === $value_back);
+	var_dump($value);
+	var_dump($value_back);
 }
 
 fetch_with_compression($m, 'hello01', $data, 'zlib',         1.3, 4);
