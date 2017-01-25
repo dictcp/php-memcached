@@ -871,13 +871,14 @@ zend_bool s_compress_value (php_memc_compression_type compression_type, zend_str
 
 	if (!compress_status) {
 		php_error_docref(NULL, E_WARNING, "could not compress value");
+		MEMC_VAL_DEL_FLAG(*flags, MEMC_VAL_COMPRESSED);
 		efree (buffer);
 		return 0;
 	}
 
 	/* This means the value was too small to be compressed, still a success */
 	if (ZSTR_LEN(payload) <= (compressed_size * MEMC_G(compression_factor))) {
-		MEMC_VAL_DEL_FLAG(*flags, MEMC_VAL_COMPRESSION_FASTLZ | MEMC_VAL_COMPRESSION_ZLIB);
+		MEMC_VAL_DEL_FLAG(*flags, MEMC_VAL_COMPRESSED | MEMC_VAL_COMPRESSION_FASTLZ | MEMC_VAL_COMPRESSION_ZLIB);
 		efree (buffer);
 		return 1;
 	}
